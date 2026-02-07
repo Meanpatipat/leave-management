@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Leave Management System</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f4f6f8;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      margin-bottom: 15px;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 12px;
+      background: #007bff;
+      border: none;
+      border-radius: 6px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .result {
+      margin-top: 10px;
+      padding: 10px;
+      background: #e9f7ef;
+      border-left: 4px solid #2ecc71;
+      display: none;
+    }
+
+    .error {
+      background: #fdecea;
+      border-left: 4px solid #e74c3c;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Leave Management System</h1>
+
+    <!-- Leave Request -->
+    <div class="card">
+      <h2>Request Leave</h2>
+
+      <form id="leaveForm">
+        <label>Employee Name</label>
+        <input type="text" id="name" required>
+
+        <label>Leave Type</label>
+        <select id="type">
+          <option value="Sick Leave">Sick Leave</option>
+          <option value="Personal Leave">Personal Leave</option>
+        </select>
+
+        <label>Start Date</label>
+        <input type="date" id="startDate" required>
+
+        <label>End Date</label>
+        <input type="date" id="endDate" required>
+
+        <label>Reason</label>
+        <textarea id="reason" rows="4"></textarea>
+
+        <button type="submit">Submit Leave</button>
+      </form>
+
+      <div id="result" class="result"></div>
+    </div>
+
+    <!-- Status -->
+    <div class="card">
+      <h2>Status</h2>
+      <p>Check result in console or extend API to fetch leave status</p>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById("leaveForm");
+    const resultBox = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const data = {
+        name: document.getElementById("name").value,
+        leave_type: document.getElementById("type").value,
+        start_date: document.getElementById("startDate").value,
+        end_date: document.getElementById("endDate").value,
+        reason: document.getElementById("reason").value
+      };
+
+      try {
+        const response = await fetch("http://127.0.0.1:8000/leave/request", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          throw new Error("API error");
+        }
+
+        const result = await response.json();
+        resultBox.style.display = "block";
+        resultBox.classList.remove("error");
+        resultBox.innerText = "Leave request submitted successfully!";
+        form.reset();
+
+      } catch (error) {
+        resultBox.style.display = "block";
+        resultBox.classList.add("error");
+        resultBox.innerText = "Failed to submit leave request";
+      }
+    });
+  </script>
+</body>
+</html>
