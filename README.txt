@@ -1,4 +1,3 @@
 download requirements.txt (pip install -r requirements.txt)
-
-run code uvicorn app.main:app --reload
-
+หา firebase key มาใส่ใน code
+run code (uvicorn app.main:app --reload)
